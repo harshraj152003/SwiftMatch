@@ -8,7 +8,7 @@ app.post("/signup", async (req, res, next) => {
     firstName: "Virat",
     lastName: "Kohli",
     emailId: "virat@gmail.com",
-    password: "virat@123",
+    password: "harsh@123",
   };
 
   try {
