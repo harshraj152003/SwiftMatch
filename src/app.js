@@ -9,7 +9,7 @@ app.post("/signup", async (req, res) => {
   // Creating Instance of the User Model
   try {
     const user = new User(req.body);
-    // const 
+    // const
     await user.save();
     res.status(201).send("User Added Successfully");
   } catch (error) {
@@ -60,18 +60,39 @@ app.get("/feed", async (req, res) => {
 });
 
 // Update data in the db
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
   const data = req.body;
+
   try {
+    const ALLOWED_UPDATES = [
+      "photoUrl",
+      "about",
+      "gender",
+      "age",
+      "gender",
+      "skills",
+    ];
+
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+
+    if (data?.skills.length > 5) {
+      throw new Error("Can't add more than 5 skills");
+    }
+
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
       runValidators: true,
     });
-    console.log(user);
     res.status(201).send("User's Data Updated Successfully");
   } catch (err) {
-    res.status(404).send("UPDATE FAILED : "+err.message);
+    res.status(404).send("UPDATE FAILED : " + err.message);
   }
 });
 
