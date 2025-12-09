@@ -9,6 +9,7 @@ app.post("/signup", async (req, res) => {
   // Creating Instance of the User Model
   try {
     const user = new User(req.body);
+    // const 
     await user.save();
     res.status(201).send("User Added Successfully");
   } catch (error) {
@@ -21,17 +22,16 @@ app.post("/signup", async (req, res) => {
 });
 
 // Delete a user from db using _id
-app.delete("/user",async (req,res)=>{
+app.delete("/user", async (req, res) => {
   const userId = req.body.userId;
 
-  try{
+  try {
     const user = await User.findByIdAndDelete(userId);
-    res.status(201).send("User Deleted Successfully , Name: "+user.firstName);
-  }
-  catch(err){
+    res.status(201).send("User Deleted Successfully , Name: " + user.firstName);
+  } catch (err) {
     res.status(404).send("User not found by given Id");
   }
-})
+});
 
 // Get User by email.
 app.get("/user", async (req, res) => {
@@ -60,17 +60,20 @@ app.get("/feed", async (req, res) => {
 });
 
 // Update data in the db
-app.patch("/user",async (req,res)=>{
+app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
-  try{
-    await User.findByIdAndUpdate({_id: userId}, data);
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    console.log(user);
     res.status(201).send("User's Data Updated Successfully");
+  } catch (err) {
+    res.status(404).send("UPDATE FAILED : "+err.message);
   }
-  catch(err){
-    res.status(404).send("User not found by given ID");
-  }
-})
+});
 
 connectDB()
   .then(() => {
