@@ -66,8 +66,31 @@ const validateProfileEditData = (req) => {
     "skills",
   ];
 
-  const isAllowed = Object.keys(req.body).every((field) => allowedEditFields.includes(field));
+  const isAllowed = Object.keys(req.body).every((field) =>
+    allowedEditFields.includes(field)
+  );
   return isAllowed;
 };
 
-module.exports = { validateSignUpData, validateLoginData , validateProfileEditData};
+const validatePasswordEdit = (req , password) => {
+  const allowedEditField = ["password"];
+
+  const isAllowedField = Object.keys(req.body).every((field) =>
+    allowedEditField.includes(field)
+  );
+
+  if (!isAllowedField) return false;
+
+  if (!password) return false;
+
+  if (!validator.isStrongPassword(password)) return false;
+
+  return true;
+};
+
+module.exports = {
+  validateSignUpData,
+  validateLoginData,
+  validateProfileEditData,
+  validatePasswordEdit,
+};
